@@ -38,7 +38,7 @@ switch (statement) {
       break;
     
     case "movie-this":
-      movieThis(argument);
+      movieThis();
       break;
     
     case "do-what-it-says":
@@ -55,7 +55,7 @@ function getArgument(){
     
     // loop through the arguments starting at the 3rd index
     for (let i=3; i<args.length; i++) {
-        if (i>3 && i<args.length) {argument == argument + " " + args[i]
+        if (i>3 && i<args.length) {argument == argument + "+" + args[i]
     } else argument += args[i];
     }
 }
@@ -155,12 +155,15 @@ function spotifySong(){
 }
 //  movie-this
     function movieThis(){
-        if (variable="") { variable = "Mr. Nobody" }
+        if (argument="") { argument = "Mr. Nobody" }
         else{
-            let queryUrl = "https://www.omdbapi.com/?t=" + variable + "&apikey=trilogy";
+            getArgument()
+            let queryUrl = "http://www.omdbapi.com/?t=" + argument + "&y=&plot=short&apikey=trilogy";
             axios.get(queryUrl).then(
                 function(response) {
-                  console.log("Title: " + response.data.title);
+                
+                
+                  console.log("Title: " + response.data.Title);
                   console.log("Year: " + response.data.Year);
                   console.log("IMDB Rating: " + response.data.imdbRating);
                   console.log("Rotten Tomatoes Rating: "+ response.data.Ratings[1].Value);
