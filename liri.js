@@ -30,19 +30,19 @@ logger.write(`-------------------------\n` + timestamp + statement + `,`+argumen
 // The switch-case will direct which function gets run.
 switch (statement) {
     case "concert-this":
-      concertThis(variable);
+      concertThis(argument);
       break;
     
     case "spotify-this-song":
-      spotifySong(variable);
+      spotifySong(argument);
       break;
     
     case "movie-this":
-      movieThis(variable);
+      movieThis(argument);
       break;
     
     case "do-what-it-says":
-      doWhat(variable);
+      doWhat(argument);
       break;
     }
     
@@ -52,10 +52,10 @@ function getArgument(){
 
     // grab the command line arguments
     let args = process.argv;
-    let argument = ""
+    
     // loop through the arguments starting at the 3rd index
     for (let i=3; i<args.length; i++) {
-        if (i>3 && i<args.length) {argument = argument + " " + args[i]
+        if (i>3 && i<args.length) {argument == argument + " " + args[i]
     } else argument += args[i];
     }
 }
@@ -110,29 +110,36 @@ for (let i=0; i < response.data.length; i++) {
 //spotify-this-song
 
 function spotifySong(){
-     if (variable="") { variable = "The Sign"}
-     else{
-       
-    // Then run a request with axios to the Bands in Town API with the artist specified
-    spotify.search({ type: 'track', query: variable }
-    
-        
-      ).then(function(err, response)
-          {
-              if (err) {console.log(err)}
-           let items = response.tracks.items;
-        
-            for (i=0; i< items.length; i++);{
-                let artists = items[i].artists[0].name;
-                let song=items[i].name;
-                let preview = "";
-                if (items[i].preview_url == null) { preview ="No preview link available"} else {
-                    preview = items[i].preview_url;
+    console.log(argument);
+     if (argument=="") { 
+         argument = "The Sign"
+    } else{  
+        // Then run a request with axios to the Bands in Town API with the artist specified
+        spotify.search({type: 'track', query: argument}, (function(err, response){
+            if (err){
+                return console.log('Error occurred: ' + err);
+            } else{
+                let items = response.tracks.items;
+                for (var i=0; i< items.length; i++){
+                    let artists = "";
+                    for (var j =0; j<items[i].artists[j].length; j++){
+                        if (j==parseInt(items[i].artists[j].length) - 1){
+                        artists += items[i].artists[j].name;
+                        } else {
+                            artists += `${items[i].artists[j].name} and `;
+                        }
+                    }
+                    let song=items[i].name;
+                    let preview = "";
+                    if (items[i].preview_Url == null) { 
+                        preview ="No preview link available"
+                    } else {
+                        preview = items[i].preview_Url;
                     }
                     let album = items[i].album.name
-                    console.log(i)
-               console.log(`artist(s): `+ artists + "\n");
+                    console.log(`------------------------\nResult #${i+1}`)
                     console.log(`Song Name: ` + song);
+                    console.log(`artist(s): `+ typeof(artists) + "\n");
                     console.log(`Preview Song: ` + preview);
                     console.log(`Album: ` + album)
                     logger.write(`-----------------------` + "\n");
@@ -140,13 +147,14 @@ function spotifySong(){
                     logger.write(`Artist(s)`+ artists + "\n");
                     logger.write("Song name: " + song + `\n`);
                     logger.write(`Preview Song: ` + preview + "\n");
-                   logger.write('Album: ' + album)
+                    logger.write('Album: ' + album)
+                }
             }
-        })
-     
-      }}
+        }))
+    }
+}
 //  movie-this
-    function movieThis(variable){
+    function movieThis(){
         if (variable="") { variable = "Mr. Nobody" }
         else{
             let queryUrl = "https://www.omdbapi.com/?t=" + variable + "&apikey=trilogy";
