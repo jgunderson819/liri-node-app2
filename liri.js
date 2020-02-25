@@ -1,31 +1,28 @@
 require("dotenv").config();
 
-var keys = require("./keys.js");
-var axios = require("axios");
-var spotify = new Spotify(keys.spotify);
-var pry = require("Pryjs")
-var Spotify = require('node-spotify-api');
+const keys = require("./keys.js");
+const axios = require("axios");
+const Spotify = require('node-spotify-api');
+const spotify = new Spotify(keys.spotify);
+// const pry = require("Pryjs")
 
-var fs = require("fs");
-var moment = require(`moment`);
-var inquirer = require("inquirer");
-var logger = fs.createWriteStream(`log.txt`,{flags:`a`});
+
+const fs = require("fs");
+const moment = require(`moment`);
+const inquirer = require("inquirer");
+const logger = fs.createWriteStream(`log.txt`,{flags:`a`});
 
 // create timestamp
 let timestamp = moment().format(`MM/DD/YYYY h:mm:ss a`)
-var artist = "";
-var concert="";
-var song="";
-var movie="";
-var dowhat="";
+
 var variable =process.argv[3]
-var statement=process.arv[2]
+var statement=process.argv[2]
 // Create a variable to handle the full search argument
 let argument = "";
 getArgument();
 
 //Create timestamp each time the application is run.
-logger.append(`-------------------------\n` + timestamp + statement + `,`+argument + `\n`);
+logger.write(`-------------------------\n` + timestamp + statement + `,`+argument + `\n`);
 
   
 
@@ -55,6 +52,7 @@ function getArgument(){
 
     // grab the command line arguments
     let args = process.argv;
+    let argument = ""
     // loop through the arguments starting at the 3rd index
     for (let i=3; i<args.length; i++) {
         if (i>3 && i<args.length) {argument = argument + " " + args[i]
@@ -65,24 +63,24 @@ function getArgument(){
 
 
 // concertThis function
-function concertThis(variable){
+function concertThis(){
 ;
 // Then run a request with axios to the Bands in Town API with the artist specified
-axios.get(`"https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp"`).then(
+axios.get("https://rest.bandsintown.com/artists/" + variable + "/events?app_id=codingbootcamp").then(
   function(response) {
       // Grab the artist name and log it to the console.
 let artistName = response.data[0].artist.name 
 console.log("Upcoming concerts for ${artistName}:")
-console.log(response)
+
 // Loop through the response data and log the city, region, country, venue, and date for each result found
 for (let i=0; i < response.data.length; i++) {
     let city = response.data[i].venue.city;
-    let region = response.data[i].venue.country;
+    let region = response.data[i].venue.region;
     let venue = response.data[i].venue.name;
     let date = ""
     date = moment(response.data[i].datetime).format(`MM/DD/YYYY`);
     console.log(i);
-    console.log(`${city},${region},${country}, at ${venue}on ${date}` + "\n");
+    console.log(`${city},${region},${region}, at ${venue}on ${date}` + "\n");
 }}) 
 
   .catch(function(error) {
@@ -111,49 +109,53 @@ for (let i=0; i < response.data.length; i++) {
 
 //spotify-this-song
 
-function spotifySong(variable){
-    if (argument="") { argument = "The Sign"}
-    else{
+function spotifySong(){
+     if (variable="") { variable = "The Sign"}
+     else{
+       
     // Then run a request with axios to the Bands in Town API with the artist specified
-    spotify.search({ type: 'track', query: argument }, function(err, data) {
-        if (err) {
-          return console.log('Error occurred: ' + err);
-        }}
-       .then (function(response){
-           let items = response.track.items;
-           for (i=0; i< items.length; i++);{
-               let artists = items[i].artists[0].name;
-               let song=items[i].name;
-               let preview = "";
-               if (items[i].preview_Url == null) { preview ="No preview link available"} else {
-                   preview = items[i].preview_Url;
-                   }
-                   let album = items[i].album.name
-                   console.log(i)
-                   console.log(`artist(s): `+ artists + "\n");
-                   console.log(`Song Name: ` + song);
-                   console.log(`Preview Song: ` + preview);
-                   console.log(`Album: ` + album)
-                   logger.write(`-----------------------` + "\n");
-                   logger.write(i + "\n");
-                   logger.write(`Artist(s)`+ artists + "\n");
-                   logger.write("Song name: " + song + `\n`);
-                   logger.write(`Preview Song: ` + preview + "\n");
+    spotify.search({ type: 'track', query: variable }
+    
+        
+      ).then(function(err, response)
+          {
+              if (err) {console.log(err)}
+           let items = response.tracks.items;
+        
+            for (i=0; i< items.length; i++);{
+                let artists = items[i].artists[0].name;
+                let song=items[i].name;
+                let preview = "";
+                if (items[i].preview_url == null) { preview ="No preview link available"} else {
+                    preview = items[i].preview_url;
+                    }
+                    let album = items[i].album.name
+                    console.log(i)
+               console.log(`artist(s): `+ artists + "\n");
+                    console.log(`Song Name: ` + song);
+                    console.log(`Preview Song: ` + preview);
+                    console.log(`Album: ` + album)
+                    logger.write(`-----------------------` + "\n");
+                    logger.write(i + "\n");
+                    logger.write(`Artist(s)`+ artists + "\n");
+                    logger.write("Song name: " + song + `\n`);
+                    logger.write(`Preview Song: ` + preview + "\n");
                    logger.write('Album: ' + album)
-           }
-       })
-      .catch(function(err) {console.log(err)}) 
-      )}}
+            }
+        })
+     
+      }}
 //  movie-this
     function movieThis(variable){
         if (variable="") { variable = "Mr. Nobody" }
         else{
-            axios.get("http://www.omdbapi.com/?t=" + variable + "&apikey=trilogy").then(
+            let queryUrl = "https://www.omdbapi.com/?t=" + variable + "&apikey=trilogy";
+            axios.get(queryUrl).then(
                 function(response) {
                   console.log("Title: " + response.data.title);
                   console.log("Year: " + response.data.Year);
-                  console.log("The movie's rating is: " + response.data.imdbRating);
-                  console.log("The movie's rating is: "+ response.data.Ratings[1].Value);
+                  console.log("IMDB Rating: " + response.data.imdbRating);
+                  console.log("Rotten Tomatoes Rating: "+ response.data.Ratings[1].Value);
                   console.log("Country: " + response.data.Country);
                   console.log("Language: " + response.data.Language);
                   console.log("Plot: " + response.data.Plot);
