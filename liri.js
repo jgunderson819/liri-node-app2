@@ -214,8 +214,8 @@ function spotifySong(){
         // If the code experiences any errors it will log the error to the console.
         if (error) {
             return console.log(error);
-        }
-
+        } else {
+          getArgument()
         // Then split it by commas (to make it more readable)
         var dataArr = data.split(",");
 
@@ -227,4 +227,4 @@ function spotifySong(){
         else if (action = "movie-this") {movieThis(query)}
         else {console.log("I don't know what to do????????")}
 
-            })}}
+            }})}}
