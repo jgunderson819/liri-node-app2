@@ -16,7 +16,7 @@ You can find these jpgs at:
 
 
 "movie-this"
-![movie-this screenshot](/assets/images/movie-this2.JPG)
+![movie-this screenshot](/assets/images/movie-this-2.JPG)
 
 
 
