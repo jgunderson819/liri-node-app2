@@ -201,9 +201,9 @@ function spotifySong(){
           console.log(error.config);
           }
       
+          )}
     
-   , 
-)}
+        }
         // do-what-it-says
         function doWhat(){
              // This block of code will read from the "random.txt" file.
@@ -227,4 +227,4 @@ function spotifySong(){
         else if (action = "movie-this") {movieThis(query)}
         else {console.log("I don't know what to do????????")}
 
-            }})}}
+            }})}
